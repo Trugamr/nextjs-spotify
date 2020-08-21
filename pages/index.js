@@ -9,7 +9,7 @@ export const getServerSideProps = async ({ req }) => {
 const Home = ({ session }) => {
   return (
     <div className="container">
-      <h1>Hello Next 👋</h1>
+      <h1>Hello {session ? session.user.name : ''} 👋</h1>
       {!session && (
         <>
           Not signed in <br />
