@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { getSession } from 'next-auth/client'
 import axios from 'axios'
 import useSWR from 'swr'
+import spotifyFetcher from '../lib/spotify.fetcher'
 
 export const getServerSideProps = async ({ req }) => {
   const session = await getSession({ req })
@@ -13,21 +14,12 @@ export const getServerSideProps = async ({ req }) => {
   }
 }
 
-const fetcher = url =>
-  axios({
-    method: 'GET',
-    url
-  }).then(res => res.data)
-
-const logger = (url, fetcher) => {
-  console.log(url)
-  return fetcher(url)
-}
-
 const Playing = ({ session }) => {
-  const { data, error } = useSWR('/api/spotify/currently-playing', arg =>
-    logger(arg, fetcher)
+  const { data, error } = useSWR(
+    '/api/spotify/currently-playing',
+    spotifyFetcher
   )
+
   if (!session)
     return (
       <div className="container">

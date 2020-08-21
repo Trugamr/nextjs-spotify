@@ -29,9 +29,16 @@ export default async (req, res) => {
       data: currentlyPlaying
     })
   } catch (err) {
-    return res.json({
-      success: false,
-      error: 'Failed to get currently playing info.'
-    })
+    if (err.response) {
+      res.status(err.response.status).json({
+        success: false,
+        error: err.message
+      })
+    } else {
+      res.status(500).json({
+        success: false,
+        error: 'Failed to get currently playing.'
+      })
+    }
   }
 }
