@@ -11,11 +11,14 @@
   "dependencies": {
     "axios": "^0.19.2",
     "axios-auth-refresh": "^2.2.8",
-    "mongodb": "^3.6.0",
+    "mongoose": "5.9.29",
     "next": "9.5.2",
     "next-auth": "^3.1.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "swr": "^0.3.1"
+  },
+  "peerOptionalDependencies": {
+    "mongodb": "3.5.10"
   }
 }

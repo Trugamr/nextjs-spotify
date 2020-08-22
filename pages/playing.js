@@ -7,7 +7,13 @@ import Spotify from '../lib/spotify'
 export const getServerSideProps = async ({ req }) => {
   const session = await getSession({ req })
   let accountInfo = null
-  if (session) accountInfo = await getAccountFromEmail(session.user.email)
+  if (session) {
+    try {
+      accountInfo = await getAccountFromEmail(session.user.email)
+    } catch (err) {
+      console.log(`FAILED TO GET ACCOUNT INFO FOR ${session.user.name}`, err)
+    }
+  }
 
   return {
     props: {
@@ -47,21 +53,35 @@ const Playing = ({ session }) => {
       </div>
     )
 
-  if (error) return <h1>Error getting currently playing 😢</h1>
+  if (error)
+    return (
+      <div className="container">
+        <h1>Error getting currently playing 😢</h1>
+      </div>
+    )
+  if (data === undefined && !error)
+    return (
+      <div className="container">
+        {' '}
+        <h2>Loading</h2>
+      </div>
+    )
 
   return (
     <div className="container">
-      <h1>{data?.is_playing ? 'Playing' : 'Paused'}</h1>
-
-      {!data && !error && <h2>Loading</h2>}
-
-      {data && (
+      <h1>
+        {data?.is_playing
+          ? 'Playing'
+          : data
+          ? 'Paused'
+          : "You aren't playing anything"}
+      </h1>
+      {data && data.item && (
         <div>
           <img style={{ width: 240 }} src={data.item?.album?.images[0].url} />
           <p>{data.item?.name}</p>
         </div>
       )}
-
       <Link href="/">
         <a>&larr; back to home</a>
       </Link>
