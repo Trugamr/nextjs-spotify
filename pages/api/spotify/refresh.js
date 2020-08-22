@@ -3,6 +3,7 @@ import { getAccountFromEmail, connectMongoDB } from '../../../utils/mongo'
 import { stringToBase64 } from '../../../utils/utils'
 import axios from 'axios'
 import qs from 'querystring'
+import { Account } from '../../../utils/models'
 
 const { SPOTIFY_ID, SPOTIFY_SECRET } = process.env
 
@@ -55,16 +56,16 @@ export default async (req, res) => {
 
   // Updating accessToken in database
   try {
-    const mongoClient = await connectMongoDB()
-    await mongoClient
-      .db('spotify')
-      .collection('accounts')
-      .updateOne(
-        {
-          _id: accountInfo._id
-        },
-        { $set: { accessToken: newAccessToken } }
-      )
+    await connectMongoDB()
+    await Account.findByIdAndUpdate(
+      accountInfo._id,
+      {
+        accessToken: newAccessToken
+      },
+      {
+        useFindAndModify: false
+      }
+    )
   } catch (error) {
     return res.json({
       success: false,
